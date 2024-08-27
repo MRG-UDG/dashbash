@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2024-08-27T12:00:00Z" product-name="dashbash">
+        <header/>
+        <body>
+            <trans-unit id="widget.ctypes.title">
+                <source>CTypes Overview</source>
+            </trans-unit>
+            <trans-unit id="widget.ctypes.description">
+                <source>Shows the count of different CTypes in the tt_content table</source>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>
