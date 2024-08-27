@@ -3,8 +3,17 @@
   "type": "typo3-cms-extension",
   "description": "Custom dashboard widgets for TYPO3",
   "license": "GPL-2.0-or-later",
+  "authors": [
+    {
+      "name": "Marko Röper-Grewe",
+      "email": "marko.roeper-grewe@udg.de",
+      "homepage": "https://www.udg.de/de/",
+      "role": "Developer"
+    }
+  ],
   "require": {
     "typo3/cms-core": "^11.5 || ^12.4",
+    "typo3/cms-backend": "^11.5 || ^12.4",
     "typo3/cms-dashboard": "^11.5 || ^12.4"
   },
   "autoload": {

@@ -7,16 +7,23 @@ services:
   MRG\Dashbash\:
     resource: '../Classes/*'
 
-  dashboard.widget.ctypes:
-    class: 'MRG\Dashbash\Widgets\CTypesWidget'
+  MRG\Dashbash\Widgets\CTypesWidget:
+    public: true
     arguments:
+      $configuration: '@dashboard.views.widget'
       $view: '@dashboard.views.widget'
+      $siteFinder: '@TYPO3\CMS\Core\Site\SiteFinder'
     tags:
       - name: dashboard.widget
         identifier: 'ctypes'
         groupNames: 'general'
-        title: 'LLL:EXT:dashbash/Resources/Private/Language/locallang.xlf:widget.ctypes.title'
-        description: 'LLL:EXT:dashbash/Resources/Private/Language/locallang.xlf:widget.ctypes.description'
+        title: 'CTypes and Languages Overview'
+        description: 'Shows the count of different CTypes and used languages'
         iconIdentifier: 'content-widget-chart'
         height: 'medium'
         width: 'medium'
+
+  dashboard.widget.ctypes:
+    class: 'MRG\Dashbash\Widgets\CTypesWidget'
+    arguments:
+      $view: '@dashboard.views.widget'
