@@ -1,3 +1,6 @@
 .dashboard-item--dashbash {
     /* eigenes CSS für das Dashbash Widget */
+    .table > tbody > tr > th {
+        white-space: normal !important;
+    }
 }

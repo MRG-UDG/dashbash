@@ -28,16 +28,29 @@
             <tr>
                 <f:if condition="{oneCType}=='list'">
                     <f:then>
-                        <th scope="row" title="{oneCType}">{f:translate(key: ctypeInfo.name)}</th>
-                        <f:for each="{ctypeInfo.listTypes}" key="listType" as="listTypeName">
-                            <td>&gt; {listTypeName}</td>
-                        </f:for>
+                        <th scope="row" title="{oneCType}">
+                            <f:if condition="{ctypeInfo.name -> f:format.case(mode: 'upper') -> f:format.crop(maxCharacters: 4, append: '')} == 'LLL:'">
+                                <f:then>
+                                    {f:translate(key: ctypeInfo.name)}
+                                </f:then>
+                                <f:else>
+                                    {ctypeInfo.name}
+                                </f:else>
+                            </f:if>
+                        </th>
+                        <f:variable name="noCounts">true</f:variable>
                         <f:for each="{ctypes}" as="usedctype" key="label">
-                            <f:if condition="{label}=={oneCType} && {listType}=={usedctype.list_type}">
+                            <f:if condition="{label}=={oneCType}">
+                                <f:variable name="noCounts">false</f:variable>
+                                <f:for each="{ctypeInfo.listTypes}" key="listType" as="listTypeName">
+                                    <f:if condition="{listTypeName}=={usedctype.0.list_type}">
+                                        <td>&gt; {listTypeName}</td>
+                                    </f:if>
+                                </f:for>
                                 <f:for each="{allLanguages}" key="languageId" as="language">
-                                    <f:if condition="{usedctype.{languageId}}">
+                                    <f:if condition="{usedctype.{languageId}.count}">
                                         <f:then>
-                                            <td>{usedctype.{languageId}}</td>
+                                            <td class="text-end">{usedctype.{languageId}.count}</td>
                                         </f:then>
                                         <f:else>
                                             <td>&nbsp;</td>
@@ -46,17 +59,31 @@
                                 </f:for>
                             </f:if>
                         </f:for>
+                        <f:if condition="{noCounts}">
+                            <f:for each="{allLanguages}" key="languageId" as="language">
+                                <td>&nbsp;</td>
+                            </f:for>
+                        </f:if>
                     </f:then>
                     <f:else>
-                        <th scope="row" colspan="2" title="{oneCType}">{f:translate(key: ctypeInfo.name)}</th>
+                        <th scope="row" colspan="2" title="{oneCType}">
+                            <f:if condition="{ctypeInfo.name -> f:format.case(mode: 'upper') -> f:format.crop(maxCharacters: 4, append: '')} == 'LLL:'">
+                                <f:then>
+                                    {f:translate(key: ctypeInfo.name)}
+                                </f:then>
+                                <f:else>
+                                    {ctypeInfo.name}
+                                </f:else>
+                            </f:if>
+                        </th>
                         <f:variable name="noCounts">true</f:variable>
                         <f:for each="{ctypes}" as="usedctype" key="label">
                             <f:if condition="{label}=={oneCType}">
                                 <f:variable name="noCounts">false</f:variable>
                                 <f:for each="{allLanguages}" key="languageId" as="language">
-                                    <f:if condition="{usedctype.{languageId}}">
+                                    <f:if condition="{usedctype.{languageId}.count}">
                                         <f:then>
-                                            <td>{usedctype.{languageId}}</td>
+                                            <td class="text-end">{usedctype.{languageId}.count}</td>
                                         </f:then>
                                         <f:else>
                                             <td>&nbsp;</td>

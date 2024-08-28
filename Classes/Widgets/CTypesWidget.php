@@ -53,10 +53,14 @@ class CTypesWidget implements WidgetInterface, AdditionalCssInterface
             $langaugeUids[] = $result['sys_language_uid'];
             if (!isset($ctypes[$result['CType']])) {
                 $ctypes[$result['CType']] = [
-                    $result['sys_language_uid'] => $result['count']
+                    $result['sys_language_uid'] => [
+                        'count' => $result['count'],
+                        'list_type' => $result['list_type'],
+                    ],
                 ];
             } else {
-                $ctypes[$result['CType']][$result['sys_language_uid']] = $result['count'];
+                $ctypes[$result['CType']][$result['sys_language_uid']]['count'] = $result['count'];
+                $ctypes[$result['CType']][$result['sys_language_uid']]['list_type'] = $result['list_type'];
             }
         }
         $langaugeUids = array_unique($langaugeUids);
@@ -83,10 +87,18 @@ class CTypesWidget implements WidgetInterface, AdditionalCssInterface
         $tcaCtypes = $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'];
         foreach ($tcaCtypes as $ctype) {
             if (is_array($ctype) && isset($ctype[0], $ctype[1]) && $ctype[1] != '--div--') {
+                // V11
                 $allCTypes[$ctype[1]] = [
                     'name' => $ctype[0],
                     'ctype' => $ctype[1],
                     'listTypes' => ($ctype[1] === 'list') ? $this->getListTypes() : []
+                ];
+            } else if (is_array($ctype) && isset($ctype['value'], $ctype['label']) && $ctype['value'] != '--div--') {
+                // V12+
+                $allCTypes[$ctype['value']] = [
+                    'name' => $ctype['label'],
+                    'ctype' => $ctype['value'],
+                    'listTypes' => ($ctype['value'] === 'list') ? $this->getListTypes() : []
                 ];
             }
         }
@@ -101,7 +113,11 @@ class CTypesWidget implements WidgetInterface, AdditionalCssInterface
         $tcaListTypes = $GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'];
         foreach ($tcaListTypes as $listType) {
             if (is_array($listType) && isset($listType[0], $listType[1]) && $listType[0] != '') {
+                // V11
                 $listTypes[$listType[1]] = $listType[0];
+            } else if (is_array($listType) && isset($listType['value'], $listType['label']) && $listType['value'] != '') {
+                // V12+
+                $listTypes[$listType['label']] = $listType['value'];
             }
         }
 
@@ -127,7 +143,7 @@ class CTypesWidget implements WidgetInterface, AdditionalCssInterface
                     ];
                 } else {
                     // If the language is used in multiple sites, add the site name and rootpage to the list
-                    if (!in_array($site->getIdentifier(), $allLanguages[$languageId]['siteName'])) {
+                    if ($allLanguages[$languageId]['siteName'] && !in_array($site->getIdentifier(), $allLanguages[$languageId]['siteName'])) {
                         $allLanguages[$languageId]['siteNames'][] = $site->getIdentifier();
                         $allLanguages[$languageId]['siteRootPageIds'][] = $site->getRootPageId();
                     }
