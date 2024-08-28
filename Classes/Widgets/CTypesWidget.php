@@ -4,11 +4,12 @@ namespace MRG\Dashbash\Widgets;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Site\SiteFinder;
+use TYPO3\CMS\Dashboard\Widgets\AdditionalCssInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetConfigurationInterface;
 use TYPO3\CMS\Dashboard\Widgets\WidgetInterface;
 use TYPO3\CMS\Fluid\View\StandaloneView;
 
-class CTypesWidget implements WidgetInterface
+class CTypesWidget implements WidgetInterface, AdditionalCssInterface
 {
     private WidgetConfigurationInterface $configuration;
     private StandaloneView $view;
@@ -24,6 +25,12 @@ class CTypesWidget implements WidgetInterface
         $this->siteFinder = $siteFinder;
     }
 
+    public function getCssFiles(): array
+    {
+        return [
+            'EXT:dashbash/Resources/Public/Css/dashbash.css'
+        ];
+    }
     public function renderWidgetContent(): string
     {
         $availableListTypes = $this->getListTypes();
@@ -58,11 +65,9 @@ class CTypesWidget implements WidgetInterface
             'EXT:dashbash/Resources/Private/Templates/Widget/CTypesWidget.html'
         );
         $this->view->assignMultiple([
-            'title' => 'CTypes Overview',
             'configuration' => $this->configuration,
             'allLanguages' => $allLanguages,
             'allCTypes' => $allCTypes,
-
             'ctypes' => $ctypes,
             'langaugeUids' => $langaugeUids,
             'availableListTypes' => $availableListTypes,
@@ -77,7 +82,7 @@ class CTypesWidget implements WidgetInterface
 
         $tcaCtypes = $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'];
         foreach ($tcaCtypes as $ctype) {
-            if (is_array($ctype) && isset($ctype[0], $ctype[1])) {
+            if (is_array($ctype) && isset($ctype[0], $ctype[1]) && $ctype[1] != '--div--') {
                 $allCTypes[$ctype[1]] = [
                     'name' => $ctype[0],
                     'ctype' => $ctype[1],

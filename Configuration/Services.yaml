@@ -16,12 +16,13 @@ services:
     tags:
       - name: dashboard.widget
         identifier: 'ctypes'
-        groupNames: 'general'
-        title: 'CTypes and Languages Overview'
-        description: 'Shows the count of different CTypes and used languages'
+        groupNames: 'systemInfo'
+        title: 'Anzahl der Inhaltselemente in den jeweiligen Sprachen'
+        description: 'Zeigt die Anzahl der verschiedenen CTypes und der verwendeten Sprachen'
         iconIdentifier: 'content-widget-dashbash'
         height: 'medium'
         width: 'medium'
+        additionalCssClasses: 'dashboard-item--dashbash'
 
   dashboard.widget.ctypes:
     class: 'MRG\Dashbash\Widgets\CTypesWidget'
