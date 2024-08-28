@@ -26,9 +26,9 @@ class CTypesWidget implements WidgetInterface
 
     public function renderWidgetContent(): string
     {
-        $availableCTypes = $this->getAvailableCTypes();
         $availableListTypes = $this->getListTypes();
-        $usedLanguages = $this->getUsedLanguages();
+        $allLanguages = $this->getAllSiteLanguages();
+        $allCTypes = $this->getAllCTypes();
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getQueryBuilderForTable('tt_content');
@@ -54,77 +54,86 @@ class CTypesWidget implements WidgetInterface
         }
         $langaugeUids = array_unique($langaugeUids);
 
-        $this->view->setTemplatePathAndFilename('EXT:dashbash/Resources/Private/Templates/Widget/CTypesWidget.html');
+        $this->view->setTemplatePathAndFilename(
+            'EXT:dashbash/Resources/Private/Templates/Widget/CTypesWidget.html'
+        );
         $this->view->assignMultiple([
             'title' => 'CTypes Overview',
             'configuration' => $this->configuration,
+            'allLanguages' => $allLanguages,
+            'allCTypes' => $allCTypes,
+
             'ctypes' => $ctypes,
             'langaugeUids' => $langaugeUids,
-            'availableCTypes' => $availableCTypes,
-            'usedLanguages' => $usedLanguages,
             'availableListTypes' => $availableListTypes,
         ]);
 
         return $this->view->render();
     }
 
-    private function getAvailableCTypes(): array
+    private function getAllCTypes(): array
     {
+        $allCTypes = [];
+
         $tcaCtypes = $GLOBALS['TCA']['tt_content']['columns']['CType']['config']['items'];
-        $availableCTypes = [];
         foreach ($tcaCtypes as $ctype) {
             if (is_array($ctype) && isset($ctype[0], $ctype[1])) {
-                $availableCTypes[$ctype[1]] = [
+                $allCTypes[$ctype[1]] = [
                     'name' => $ctype[0],
                     'ctype' => $ctype[1],
                     'listTypes' => ($ctype[1] === 'list') ? $this->getListTypes() : []
                 ];
             }
         }
-        return $availableCTypes;
+
+        return $allCTypes;
     }
 
     private function getListTypes(): array
     {
         $listTypes = [];
+
         $tcaListTypes = $GLOBALS['TCA']['tt_content']['columns']['list_type']['config']['items'];
         foreach ($tcaListTypes as $listType) {
             if (is_array($listType) && isset($listType[0], $listType[1]) && $listType[0] != '') {
                 $listTypes[$listType[1]] = $listType[0];
             }
         }
+
         return $listTypes;
     }
 
-    private function getUsedLanguages(): array
+    private function getAllSiteLanguages(): array
     {
-        $usedLanguages = [];
+        $allLanguages = [];
         $sites = $this->siteFinder->getAllSites();
 
         foreach ($sites as $site) {
             foreach ($site->getAllLanguages() as $language) {
                 $languageId = $language->getLanguageId();
-                if (!isset($usedLanguages[$languageId])) {
-                    $usedLanguages[$languageId] = [
+                if (!isset($allLanguages[$languageId])) {
+                    $allLanguages[$languageId] = [
                         'title' => $language->getTitle(),
                         'twoLetterIsoCode' => $language->getTwoLetterIsoCode(),
                         'hreflang' => $language->getHreflang(),
-                        'siteName' => $site->getIdentifier(),
                         'flagIdentifier' => $language->getFlagIdentifier(),
+                        'siteNames' => [$site->getIdentifier()],
+                        'siteRootPageIds' => [$site->getRootPageId()],
                     ];
                 } else {
-                    // If the language is used in multiple sites, add the site name to the list
-                    if (!str_contains($usedLanguages[$languageId]['siteName'], $site->getIdentifier())) {
-                        $usedLanguages[$languageId]['siteName'] .= ', ' . $site->getIdentifier();
+                    // If the language is used in multiple sites, add the site name and rootpage to the list
+                    if (!in_array($site->getIdentifier(), $allLanguages[$languageId]['siteName'])) {
+                        $allLanguages[$languageId]['siteNames'][] = $site->getIdentifier();
+                        $allLanguages[$languageId]['siteRootPageIds'][] = $site->getRootPageId();
                     }
                 }
             }
         }
 
         // Sort languages by their ID
-        ksort($usedLanguages);
+        ksort($allLanguages);
 
-        return $usedLanguages;
+        return $allLanguages;
     }
 
     public function getOptions(): array

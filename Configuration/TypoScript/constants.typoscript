@@ -1,0 +1,10 @@
+module.tx_dashbash {
+    view {
+        # cat=module.tx_tx_dashbash/file; type=string; label=Path to template root (BE)
+        templateRootPath = EXT:tx_dashbash/Resources/Private/Templates/
+        # cat=module.tx_tx_dashbash/file; type=string; label=Path to template partials (BE)
+        partialRootPath = EXT:tx_dashbash/Resources/Private/Partials/
+        # cat=module.tx_tx_dashbash/file; type=string; label=Path to template layouts (BE)
+        layoutRootPath = EXT:tx_dashbash/Resources/Private/Layouts/
+    }
+}
