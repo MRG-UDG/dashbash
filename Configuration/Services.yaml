@@ -19,7 +19,7 @@ services:
         groupNames: 'general'
         title: 'CTypes and Languages Overview'
         description: 'Shows the count of different CTypes and used languages'
-        iconIdentifier: 'content-widget-chart'
+        iconIdentifier: 'content-widget-dashbash'
         height: 'medium'
         width: 'medium'
 
